@@ -1,19 +1,19 @@
 # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
 
 # base image
-FROM docker.elastic.co/elasticsearch/elasticsearch:7.17.27
+FROM docker.elastic.co/elasticsearch/elasticsearch:8.19.25
 USER root
 
 # environmental settings
-ENV ES_JAVA_OPTS '-Xms512m -Xmx512m'
-ENV cluster.name 'pelias-dev'
-ENV discovery.type 'single-node'
-ENV bootstrap.memory_lock 'true'
+ENV ES_JAVA_OPTS='-Xms512m -Xmx512m'
+ENV cluster.name='pelias-dev'
+ENV discovery.type='single-node'
+ENV bootstrap.memory_lock='true'
 RUN echo 'vm.max_map_count=262144' >> /etc/sysctl.conf
 
 # configure plugins
-RUN /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-icu
-RUN /usr/share/elasticsearch/bin/elasticsearch-plugin install repository-s3 --batch
+# note: repository-s3 is a bundled module since ES 8.0 and no longer needs installing
+RUN /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-icu --batch
 
 # elasticsearch config
 ADD elasticsearch.yml /usr/share/elasticsearch/config/
@@ -31,8 +31,7 @@ RUN chmod go+w /usr/share/elasticsearch \
 
 # add list permissions to directories
 RUN chmod go+x /usr/share/elasticsearch \
-  /usr/share/elasticsearch/config \
-  /usr/share/elasticsearch/config/repository-s3
+  /usr/share/elasticsearch/config
 
 # add execute permissions to bins
 RUN chmod go+x /usr/share/elasticsearch/bin/*

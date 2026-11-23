@@ -1,9 +1,12 @@
 bootstrap.memory_lock: true
 network.host: 0.0.0.0
 http.port: 9200
-node.master: true
-node.data: true
 thread_pool:
   write:
     queue_size: 1000
-indices.query.bool.max_clause_count: 4000
+
+# ES8 enables TLS and authentication by default, pelias expects plain http
+xpack.security.enabled: false
+
+# avoid downloading GeoIP databases on startup, pelias doesn't use them
+ingest.geoip.downloader.enabled: false
